@@ -28,7 +28,7 @@ pinsSPI.max_transfer_sz = 0;
 ets_printf("[spi_bus_initialize]");
 if(ESP_OK != spi_bus_initialize(HSPI_HOST, &pinsSPI, 0)) { // No DMA
     ets_printf("[spi_bus_initialize] fail");
-    return; // Warning, this exmample does not close handles correctly
+    return; // Warning, this example does not close handles correctly
 }
 
 spi_device_interface_config_t confSPI;
@@ -50,14 +50,14 @@ spi_device_handle_t deviceSPI
 ets_printf("[spi_bus_add_device]");
 if(ESP_OK != spi_bus_add_device(HSPI_HOST, &confSPI, &deviceSPI)) {
     ets_printf("[spi_bus_add_device] fail");
-    return; // Warning, this exmample does not close handles correctly
+    return; // Warning, this example does not close handles correctly
 }
 
 ets_printf("[libswd_init]");
 libswd_ctx_t* libswdctx = libswd_init();
 if(libswdctx == nullptr) {
     ets_printf("[libswd_init] returned empty context");
-    return; // Warning, this exmample does not close handles correctly
+    return; // Warning, this example does not close handles correctly
 }
 
 libswd_log_level_set(libswdctx, LIBSWD_LOGLEVEL_DEBUG);
@@ -72,7 +72,7 @@ ets_printf("[libswd_dap_detect]");
 auto dap_res = libswd_dap_detect(libswdctx, LIBSWD_OPERATION_EXECUTE, &idcode_ptr);
 if(LIBSWD_OK != dap_res) {
     ets_printf("[libswd_dap_detect] failed with code %d\n", dap_res);
-    return; // Warning, this exmample does not close handles correctly
+    return; // Warning, this example does not close handles correctly
 }
 
 char buff[128];
@@ -87,7 +87,7 @@ ets_printf("[libswd_memap_init]");
 auto memmap_res = libswd_memap_init(libswdctx, LIBSWD_OPERATION_EXECUTE);
 if(LIBSWD_OK != memmap_res) {
     ets_printf("[libswd_memap_init] failed");
-    return; // Warning, this exmample does not close handles correctly
+    return; // Warning, this example does not close handles correctly
 }
 
 const uint16_t buffCnt = 4;
