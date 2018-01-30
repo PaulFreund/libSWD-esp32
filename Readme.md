@@ -10,9 +10,9 @@ The following example code is able to read out the ID code of a CPU and read 4 b
 
 ## Neccessary includes
 ```c
-    #include <driver/spi_master.h>
-    #include <libswd.h>
-    #include <rom/ets_sys.h> // For ets_printf
+#include <driver/spi_master.h>
+#include <libswd.h>
+#include <rom/ets_sys.h> // For ets_printf
 ```
 
 ## Set up libSWD and the SPI device
