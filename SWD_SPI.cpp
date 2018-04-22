@@ -32,11 +32,31 @@
  *
  */
 
-#include <driver/spi_master.h>
-#include <libswd.h>
+#define DIRECTION_GPIO GPIO_NUM_4
+#define DIRECTION_MISO 0
+#define DIRECTION_MOSI 1
+
+#define direction_set(gpio, direction) gpio_set_level(gpio, direction)
+//#define direction_set(gpio, direction)
+
+extern "C" {
+    #include <driver/spi_master.h>
+    #include <libswd.h>
+}
+
+#include <mutex>
 
 //#define spi_printf(...) ets_printf(__VA_ARGS__)
 #define spi_printf(...) 
+
+std::mutex mutexTransmit;
+inline void transmitSPI(spi_device_handle_t devSPI, spi_transaction_t* transSPI) {
+    std::lock_guard<std::mutex> lock(mutexTransmit);
+    
+    if(ESP_OK != spi_device_transmit(devSPI, transSPI)) {
+        spi_printf(" - FAIL\n");
+    }
+}
 
 extern int libswd_drv_mosi_8(libswd_ctx_t *libswdctx, libswd_cmd_t *cmd, char *data, int bits, int nLSBfirst) {
     spi_printf("[MOSI08][%02d] -> ", bits);
@@ -53,9 +73,9 @@ extern int libswd_drv_mosi_8(libswd_ctx_t *libswdctx, libswd_cmd_t *cmd, char *d
     transSPI.rxlength = 0;
     transSPI.tx_data[0] = *data;
 
-    if(ESP_OK != spi_device_transmit(*devSPI, &transSPI)) {
-        spi_printf(" - FAIL\n");
-    }
+    direction_set(DIRECTION_GPIO, DIRECTION_MOSI);
+    transmitSPI(*devSPI, &transSPI);
+    direction_set(DIRECTION_GPIO, DIRECTION_MISO);
 
     spi_printf("%02x", transSPI.tx_data[0]);
     
@@ -79,9 +99,9 @@ extern int libswd_drv_mosi_32(libswd_ctx_t *libswdctx, libswd_cmd_t *cmd, int *d
 
     *((int*)(&transSPI.tx_data)) = (*data);
 
-    if(ESP_OK != spi_device_transmit(*devSPI, &transSPI)) {
-        spi_printf(" - FAIL\n");
-    }
+    direction_set(DIRECTION_GPIO, DIRECTION_MOSI);
+    transmitSPI(*devSPI, &transSPI);
+    direction_set(DIRECTION_GPIO, DIRECTION_MISO);
 
     spi_printf("%02x %02x %02x %02x", transSPI.tx_data[0], transSPI.tx_data[1], transSPI.tx_data[2], transSPI.tx_data[3]);
     
@@ -103,9 +123,7 @@ extern int libswd_drv_miso_8(libswd_ctx_t *libswdctx, libswd_cmd_t *cmd, char *d
     transSPI.length = 0; // Bits
     transSPI.rxlength = bits; // Bits expected
 
-    if(ESP_OK != spi_device_transmit(*devSPI, &transSPI)) {
-        spi_printf(" - FAIL\n");
-    }
+    transmitSPI(*devSPI, &transSPI);
 
     spi_printf("%02x", transSPI.rx_data[0]);
 
@@ -129,9 +147,7 @@ extern int libswd_drv_miso_32(libswd_ctx_t *libswdctx, libswd_cmd_t *cmd, int *d
     transSPI.length = 0; // Bits
     transSPI.rxlength = bits; // Bits expected
 
-    if(ESP_OK != spi_device_transmit(*devSPI, &transSPI)) {
-        spi_printf(" - FAIL\n");
-    }
+    transmitSPI(*devSPI, &transSPI);
 
     spi_printf("%02x %02x %02x %02x", transSPI.rx_data[0], transSPI.rx_data[1], transSPI.rx_data[2], transSPI.rx_data[3]);
 
@@ -157,10 +173,10 @@ extern int libswd_drv_mosi_trn(libswd_ctx_t *libswdctx, int clks) {
     transSPI.length = clks; // Bits
     transSPI.rxlength = 0;
 
-    if(ESP_OK != spi_device_transmit(*devSPI, &transSPI)) {
-        spi_printf(" - FAIL\n");
-    }
-    
+    direction_set(DIRECTION_GPIO, DIRECTION_MOSI);
+    transmitSPI(*devSPI, &transSPI);
+    direction_set(DIRECTION_GPIO, DIRECTION_MISO);
+
     spi_printf(";\n");
     return LIBSWD_OK;
 }
@@ -169,7 +185,6 @@ extern int libswd_drv_miso_trn(libswd_ctx_t *libswdctx, int clks) {
     spi_printf("[MISOTN][%02d]", clks);
 
     if(clks == 0) { return LIBSWD_OK; }
-    
     spi_device_handle_t* devSPI = (spi_device_handle_t*)libswdctx->driver->device;
 
     spi_transaction_t transSPI;
@@ -181,16 +196,26 @@ extern int libswd_drv_miso_trn(libswd_ctx_t *libswdctx, int clks) {
     transSPI.length = clks;
     transSPI.rxlength = 0;
 
-    if(ESP_OK != spi_device_transmit(*devSPI, &transSPI)) {
-        spi_printf(" - FAIL\n");
-    }
-    
+    direction_set(DIRECTION_GPIO, DIRECTION_MOSI);
+    transmitSPI(*devSPI, &transSPI);
+    direction_set(DIRECTION_GPIO, DIRECTION_MISO);
+
     spi_printf(";\n");
+
     return LIBSWD_OK;
 }
 
+#include "esp_log.h"
 extern int libswd_log(libswd_ctx_t *libswdctx, libswd_loglevel_t loglevel, char *msg, ...) {
-    //spi_printf(msg);
+    // va_list args;
+    // va_start (args, msg);
+
+    // char buffer[256];
+    // int length = 0;
+    // length = vsnprintf (buffer, 255, msg, args);
+    // buffer[length] = '\0';
+    // ESP_LOGE("SWD_SPI", "%s", buffer);
+    // va_end (args);
     return LIBSWD_OK;
 }
 
