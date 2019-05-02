@@ -39,20 +39,13 @@
 #define direction_set(gpio, direction) gpio_set_level(gpio, direction)
 //#define direction_set(gpio, direction)
 
-extern "C" {
-    #include <driver/spi_master.h>
-    #include <libswd.h>
-}
-
-#include <mutex>
+#include <driver/spi_master.h>
+#include <libswd.h>
 
 //#define spi_printf(...) ets_printf(__VA_ARGS__)
 #define spi_printf(...) 
 
-std::mutex mutexTransmit;
 inline void transmitSPI(spi_device_handle_t devSPI, spi_transaction_t* transSPI) {
-    std::lock_guard<std::mutex> lock(mutexTransmit);
-    
     if(ESP_OK != spi_device_transmit(devSPI, transSPI)) {
         spi_printf(" - FAIL\n");
     }
