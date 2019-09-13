@@ -40,6 +40,7 @@
 //#define direction_set(gpio, direction)
 
 #include <driver/spi_master.h>
+#include <driver/gpio.h>
 #include <libswd.h>
 
 //#define spi_printf(...) ets_printf(__VA_ARGS__)
