@@ -18,9 +18,9 @@ The following example code is able to read out the ID code of a CPU and read 4 b
 ## Set up libSWD and the SPI device
 ```c
 spi_bus_config_t pinsSPI;
-pinsSPI.mosi_io_num     = GPIO_NUM_13;
-pinsSPI.miso_io_num     = GPIO_NUM_12;
-pinsSPI.sclk_io_num     = GPIO_NUM_14;
+pinsSPI.mosi_io_num     = GPIO_NUM_13; // SWD I/O
+pinsSPI.miso_io_num     = GPIO_NUM_12; // not connected
+pinsSPI.sclk_io_num     = GPIO_NUM_14; // SWD CLK
 pinsSPI.quadwp_io_num   = -1;
 pinsSPI.quadhd_io_num   = -1;
 pinsSPI.max_transfer_sz = 0;
