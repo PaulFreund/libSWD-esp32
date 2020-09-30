@@ -1,0 +1,19 @@
+idf_component_register(
+    SRCS
+        libswd_bin.c
+        libswd_bitgen.c
+        libswd_bus.c
+        libswd_cli.c
+        libswd_cmd.c
+        libswd_cmdq.c
+        libswd_core.c
+        libswd_dap.c
+        libswd_debug.c
+        libswd_drv.c
+        libswd_error.c
+        libswd_log.c
+        libswd_memap.c
+        SWD_SPI.c
+    INCLUDE_DIRS
+        include
+)
