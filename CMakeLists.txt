@@ -3,7 +3,6 @@ idf_component_register(
         libswd_bin.c
         libswd_bitgen.c
         libswd_bus.c
-        libswd_cli.c
         libswd_cmd.c
         libswd_cmdq.c
         libswd_core.c
