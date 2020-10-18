@@ -36,6 +36,16 @@
 
 #include <libswd.h>
 
+/** Payload for commands that will not change, transmitted MSBFirst */
+/// SW-DP Reset sequence.
+static const char LIBSWD_CMD_SWDPRESET[] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00};
+/// Switches DAP from JTAG to SWD.
+static const char LIBSWD_CMD_JTAG2SWD[]  = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x9e, 0xe7};
+/// Switches DAP from SWD to JTAG.
+static const char LIBSWD_CMD_SWD2JTAG[]  = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x3c, 0xe7};
+/// Inserts idle clocks for proper data processing.
+static const char LIBSWD_CMD_IDLE[] = {0x00};
+
 /*******************************************************************************
  * \defgroup libswd_cmd_enqueue SWD Command Genration and Enqueueing routines.
  * Command quants are first generated/created in memory, then enqueued into
