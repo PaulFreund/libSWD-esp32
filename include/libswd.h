@@ -98,6 +98,10 @@
 #ifndef __LIBSWD_H__
 #define __LIBSWD_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /** SWD Packets Bit Fields and Values */
 /// Request packet Start field bitnumber, always set to 1.
 #define LIBSWD_REQUEST_START_BITNUM  0
@@ -448,16 +452,6 @@
 #define LIBSWD_RETRY_COUNT_DEFAULT 10
 /// Retry delay default value
 #define LIBSWD_RETRY_DELAY_DEFAULT 5
-
-/** Payload for commands that will not change, transmitted MSBFirst */
-/// SW-DP Reset sequence.
-static const char LIBSWD_CMD_SWDPRESET[] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00};
-/// Switches DAP from JTAG to SWD.
-static const char LIBSWD_CMD_JTAG2SWD[]  = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x9e, 0xe7};
-/// Switches DAP from SWD to JTAG.
-static const char LIBSWD_CMD_SWD2JTAG[]  = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x3c, 0xe7};
-/// Inserts idle clocks for proper data processing.
-static const char LIBSWD_CMD_IDLE[] = {0x00};
 
 /** Status and Error Codes definitions */
 /// Error Codes definition, use this to have its name on debugger.
@@ -958,5 +952,9 @@ int libswd_debug_run(libswd_ctx_t *libswdctx, libswd_operation_t operation);
 int libswd_debug_is_halted(libswd_ctx_t *libswdctx, libswd_operation_t operation);
 
 int libswd_cli(libswd_ctx_t *libswdctx, char *command);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
