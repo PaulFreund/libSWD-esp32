@@ -772,6 +772,7 @@ typedef struct libswd_debug {
 #define LIBSWD_ARM_DEBUG_DCRSR_ADDR  0xE000EDF4
 #define LIBSWD_ARM_DEBUG_DCRDR_ADDR  0xE000EDF8
 #define LIBSWD_ARM_DEBUG_DEMCR_ADDR  0xE000EDFC
+#define LIBSWD_ARM_DEBUG_AIRCR_ADDR  0xE000ED0C /* Application Interrupt and Reset Control Register */
 
 #define LIBSWD_ARM_DEBUG_DHCSR_DBGKEY_BITNUM     16
 #define LIBSWD_ARM_DEBUG_DHCSR_DBGKEY_VAL        0xA05F /* Remember to write this key every time DHCSR is written. */
@@ -948,6 +949,8 @@ int libswd_memap_write_int_32(libswd_ctx_t *libswdctx, libswd_operation_t operat
 int libswd_debug_detect(libswd_ctx_t *libswdctx, libswd_operation_t operation);
 int libswd_debug_init(libswd_ctx_t *libswdctx, libswd_operation_t operation);
 int libswd_debug_halt(libswd_ctx_t *libswdctx, libswd_operation_t operation);
+int libswd_debug_enable_reset_vector_catch(libswd_ctx_t *libswdctx, libswd_operation_t operation);
+int libswd_debug_reset(libswd_ctx_t *libswdctx, libswd_operation_t operation);
 int libswd_debug_run(libswd_ctx_t *libswdctx, libswd_operation_t operation);
 int libswd_debug_is_halted(libswd_ctx_t *libswdctx, libswd_operation_t operation);
 
