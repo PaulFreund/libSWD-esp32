@@ -134,6 +134,43 @@ int libswd_debug_halt(libswd_ctx_t *libswdctx, libswd_operation_t operation)
  return LIBSWD_ERROR_MAXRETRY;
 }
 
+int libswd_debug_enable_reset_vector_catch(libswd_ctx_t *libswdctx, libswd_operation_t operation)
+{
+    if (libswdctx==NULL) return LIBSWD_ERROR_NULLCONTEXT;
+    if (operation!=LIBSWD_OPERATION_EXECUTE && operation!=LIBSWD_OPERATION_ENQUEUE) return LIBSWD_ERROR_PARAM;
+
+    int retval;
+
+    if (!libswdctx->log.debug.initialized)
+    {
+        retval=libswd_debug_init(libswdctx, operation);
+        if (retval<0) return retval;
+    }
+    int demcr_val=0x00000001;
+    retval=libswd_memap_write_int_32(libswdctx, operation, LIBSWD_ARM_DEBUG_DEMCR_ADDR, 1, &demcr_val);
+    if (retval<0) return retval;
+    return LIBSWD_OK;
+}
+
+int libswd_debug_reset(libswd_ctx_t *libswdctx, libswd_operation_t operation)
+{
+    if (libswdctx==NULL) return LIBSWD_ERROR_NULLCONTEXT;
+    if (operation!=LIBSWD_OPERATION_EXECUTE && operation!=LIBSWD_OPERATION_ENQUEUE) return LIBSWD_ERROR_PARAM;
+
+    int retval;
+
+    if (!libswdctx->log.debug.initialized)
+    {
+        retval=libswd_debug_init(libswdctx, operation);
+        if (retval<0) return retval;
+    }
+    // Reset the CPU.
+    int aircr_val=0x05FA0004;
+    retval=libswd_memap_write_int_32(libswdctx, operation, LIBSWD_ARM_DEBUG_AIRCR_ADDR, 1, &aircr_val);
+    if (retval<0) return retval;
+    return LIBSWD_OK;
+}
+
 int libswd_debug_run(libswd_ctx_t *libswdctx, libswd_operation_t operation)
 {
  if (libswdctx==NULL) return LIBSWD_ERROR_NULLCONTEXT;
